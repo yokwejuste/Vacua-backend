@@ -1,7 +1,8 @@
-from django.contrib.auth.base_user import AbstractBaseUser
+from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.db import models
 
 from classroom.models import VacuaBaseModel
+from classroom.models.departments import Department
 from classroom.utils import create_primary_key
 
 GENDER_CHOICES = (
@@ -19,13 +20,36 @@ LEVEL_CHOICES = (
 )
 
 
+class UserManager(BaseUserManager):
+    def create_user(self, email, password=None):
+        if not email:
+            raise ValueError('Users must have an email address')
+
+        user = self.model(
+            email=self.normalize_email(email),
+        )
+
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email, password):
+        user = self.create_user(
+            email,
+            password=password,
+        )
+        user.is_admin = True
+        user.save(using=self._db)
+        return user
+
+
 class User(AbstractBaseUser, VacuaBaseModel):
     username = models.CharField(max_length=100, unique=True)
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=100)
     date_of_birth = models.DateField(null=True, blank=True)
     gender = models.CharField(max_length=20, null=True, blank=True, choices=GENDER_CHOICES, default='O')
-    department = models.ForeignKey('Department', on_delete=models.CASCADE, null=True, blank=True)
+    department = models.ForeignKey(Department, on_delete=models.CASCADE, null=True, blank=True)
     level = models.CharField(max_length=100, null=True, blank=True, choices=LEVEL_CHOICES, default='O')
     last_name = models.CharField(max_length=100)
     is_active = models.BooleanField(default=True)

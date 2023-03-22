@@ -6,6 +6,7 @@ from classroom.models import Reservations, Schools
 from classroom.models.buildings import Buildings
 from classroom.models.halls import Halls
 from classroom.serializers.buildings_serilizers import BuildingsSerializer
+from classroom.serializers.departments_serializers import DepartmentSerializer
 from classroom.serializers.halls_serializers import HallsSerializer
 from classroom.serializers.reservation_serializers import ReservationsSerializer
 from classroom.serializers.schools_serializers import SchoolsSerializer
@@ -92,6 +93,25 @@ class SchoolsModelViewSet(ModelViewSet):
 
 class UniversitiesModelViewSet(ModelViewSet):
     serializer_class = SchoolsSerializer
+    queryset = Schools.objects.all()
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Schools.objects.filter(is_deleted=False)
+
+    def perform_create(self, serializer):
+        serializer.save()
+
+    def perform_update(self, serializer):
+        serializer.save()
+
+    def perform_destroy(self, instance):
+        instance.is_deleted = True
+        instance.save()
+
+
+class DepartmentsModelViewSet(ModelViewSet):
+    serializer_class = DepartmentSerializer
     queryset = Schools.objects.all()
     permission_classes = [IsAuthenticated]
 

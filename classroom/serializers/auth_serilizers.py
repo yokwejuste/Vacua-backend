@@ -1,6 +1,8 @@
 from django.contrib.auth import authenticate
 from rest_framework import serializers
 
+from classroom.models.users import User
+
 
 class LoginSerializer(serializers.Serializer):
     def create(self, validated_data):
@@ -64,4 +66,5 @@ class RegistrationSerializer(serializers.Serializer):
         }
 
     class Meta:
+        model = User
         fields = '__all__'

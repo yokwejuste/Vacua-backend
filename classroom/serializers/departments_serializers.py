@@ -1,15 +1,12 @@
 from rest_framework import serializers
 
-from classroom.models.halls import Halls
+from classroom.models.departments import Department
 
 
-class HallsSerializer(serializers.ModelSerializer):
+class DepartmentSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Halls
+        model = Department
         fields = '__all__'
-        # extra_kwargs = {
-        #     'is_deleted': {'read_only': True},
-        # }
 
     def create(self, validated_data):
         validated_data.pop('is_deleted', None)
@@ -21,6 +18,5 @@ class HallsSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        data['building'] = instance.building.name
         data['school'] = instance.school.name
         return data

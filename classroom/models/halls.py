@@ -8,7 +8,7 @@ class Halls(VacuaBaseModel):
     school = models.ForeignKey('Schools', on_delete=models.CASCADE)
     name = models.CharField(max_length=35)
     capacity = models.IntegerField()
-    status = models.BooleanField(default=True)
+    status = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Hall"

@@ -7,6 +7,8 @@ from classroom.serializers.auth_serilizers import RegistrationSerializer
 
 class RegistrationView(generics.GenericAPIView):
     serializer_class = RegistrationSerializer
+    authentication_classes = []
+    permission_classes = []
 
     @swagger_auto_schema(
         operation_description="Register a new user",
@@ -16,7 +18,7 @@ class RegistrationView(generics.GenericAPIView):
         }
     )
     def post(self, request):
-        serializer = self.serializer_class(data=request.data)
+        serializer = self.get_serializer(data=request.data)
 
         serializer.is_valid(raise_exception=True)
 
