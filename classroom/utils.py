@@ -7,3 +7,8 @@ def create_primary_key():
 
 def get_first_related_model(model):
     return model.objects.first()
+
+
+def get_current_user(request):
+    return request.user
+
