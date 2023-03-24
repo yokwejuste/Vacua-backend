@@ -1,33 +1,25 @@
-from django.http import JsonResponse
+from oauth2_provider.contrib.rest_framework import OAuth2Authentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
-from classroom.models import Reservations, Schools
-from classroom.models.buildings import Buildings
-from classroom.models.halls import Halls
-from classroom.serializers.buildings_serilizers import BuildingsSerializer
-from classroom.serializers.departments_serializers import DepartmentSerializer
-from classroom.serializers.halls_serializers import HallsSerializer
-from classroom.serializers.reservation_serializers import ReservationsSerializer
-from classroom.serializers.schools_serializers import SchoolsSerializer
-from firebase_config import db as firebase_db
+from classroom.models import *
+from classroom.serializers import *
 
 
 class BuildingsModelViewSet(ModelViewSet):
-    queryset = Buildings.objects.all()
+    authentication_classes = [OAuth2Authentication, ]
     serializer_class = BuildingsSerializer
     permission_classes = [IsAuthenticated]
+    queryset = Buildings.objects.all()
 
     def get_queryset(self):
-        return firebase_db.collection('buildings').get()
+        return Buildings.objects.filter(is_deleted=False)
 
     def perform_create(self, serializer):
-        firebase_db.collection('buildings').push(serializer.data)
-        return JsonResponse(serializer.data, status=201)
+        serializer.save()
 
     def perform_update(self, serializer):
-        firebase_db.collection('buildings').push(serializer.data)
-        return JsonResponse(serializer.data, status=200)
+        serializer.save()
 
     def perform_destroy(self, instance):
         instance.is_deleted = True
@@ -35,6 +27,7 @@ class BuildingsModelViewSet(ModelViewSet):
 
 
 class ReservationsModelViewSet(ModelViewSet):
+    authentication_classes = [OAuth2Authentication, ]
     queryset = Reservations.objects.all()
     serializer_class = ReservationsSerializer
     permission_classes = [IsAuthenticated]
@@ -54,9 +47,10 @@ class ReservationsModelViewSet(ModelViewSet):
 
 
 class HallsModelViewSet(ModelViewSet):
+    authentication_classes = [OAuth2Authentication, ]
+    permission_classes = [IsAuthenticated]
     serializer_class = HallsSerializer
     queryset = Halls.objects.all()
-    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return Halls.objects.filter(is_deleted=False)
@@ -74,8 +68,9 @@ class HallsModelViewSet(ModelViewSet):
 
 class SchoolsModelViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
-    queryset = Schools.objects.all()
+    authentication_classes = [OAuth2Authentication, ]
     serializer_class = SchoolsSerializer
+    queryset = Schools.objects.all()
 
     def get_queryset(self):
         return Schools.objects.filter(is_deleted=False)
@@ -94,6 +89,7 @@ class SchoolsModelViewSet(ModelViewSet):
 class UniversitiesModelViewSet(ModelViewSet):
     serializer_class = SchoolsSerializer
     queryset = Schools.objects.all()
+    authentication_classes = [OAuth2Authentication, ]
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
@@ -111,9 +107,10 @@ class UniversitiesModelViewSet(ModelViewSet):
 
 
 class DepartmentsModelViewSet(ModelViewSet):
-    serializer_class = DepartmentSerializer
-    queryset = Schools.objects.all()
     permission_classes = [IsAuthenticated]
+    authentication_classes = [OAuth2Authentication, ]
+    serializer_class = DepartmentSerializer
+    queryset = Department.objects.all()
 
     def get_queryset(self):
         return Schools.objects.filter(is_deleted=False)
