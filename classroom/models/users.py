@@ -2,13 +2,12 @@ from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.db import models
 
 from classroom.models import VacuaBaseModel
-from classroom.models.departments import Department
 from classroom.utils import create_primary_key
 
 GENDER_CHOICES = (
     ('M', 'male'),
     ('F', 'female'),
-    ('O', 'other')
+    ('X', 'prefer not to say')
 )
 
 LEVEL_CHOICES = (
@@ -43,18 +42,21 @@ class UserManager(BaseUserManager):
         return user
 
 
-class User(AbstractBaseUser, VacuaBaseModel):
+class Users(AbstractBaseUser, VacuaBaseModel):
     username = models.CharField(max_length=100, unique=True)
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=100)
     date_of_birth = models.DateField(null=True, blank=True)
-    gender = models.CharField(max_length=20, null=True, blank=True, choices=GENDER_CHOICES, default='O')
-    department = models.ForeignKey(Department, on_delete=models.CASCADE, null=True, blank=True)
-    level = models.CharField(max_length=100, null=True, blank=True, choices=LEVEL_CHOICES, default='O')
+    gender = models.CharField(max_length=20, null=True, blank=True, choices=GENDER_CHOICES, default='X')
+    department = models.ForeignKey('Department', on_delete=models.CASCADE, null=True, blank=True)
+    level = models.CharField(max_length=20, null=True, blank=True, choices=LEVEL_CHOICES, default='O')
+    phone_number = models.CharField(max_length=100, null=True, blank=True)
+    number_of_students = models.PositiveIntegerField(null=True, blank=True, default=0)
     last_name = models.CharField(max_length=100)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
+    is_assistant = models.BooleanField(default=False)
     password = models.CharField(max_length=100)
     token = models.CharField(max_length=100, null=True, blank=True)
 
@@ -83,5 +85,5 @@ class User(AbstractBaseUser, VacuaBaseModel):
 
     class Meta:
         db_table = 'users'
-        verbose_name = 'User'
+        verbose_name = 'Users'
         verbose_name_plural = 'Users'
