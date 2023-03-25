@@ -1,10 +1,17 @@
 from rest_framework import serializers
 
-from classroom.models import Department
 from classroom.models.users import Users
 
 
 class LoginSerializer(serializers.Serializer):
+    def update(self, instance, validated_data):
+        instance.set_password(validated_data.get('password'))
+        instance.save()
+
+    def create(self, validated_data):
+        validated_data['password'] = Users.objects.make_random_password()
+        return Users.objects.create(**validated_data)
+
     email = serializers.EmailField()
     password = serializers.CharField()
 
@@ -24,27 +31,15 @@ class LoginResponseSerializer(serializers.Serializer):
     user = serializers.PrimaryKeyRelatedField(queryset=Users.objects.all())
 
 
-class RegistrationSerializer(serializers.Serializer):
+class RegistrationSerializer(serializers.ModelSerializer):
     phone_number = serializers.RegexField(r'^\+?1?\d{9,15}$')
-    email = serializers.EmailField()
-    username = serializers.CharField()
-    password = serializers.CharField()
-    number_of_students = serializers.IntegerField(required=False)
-    date_of_birth = serializers.DateField()
-    first_name = serializers.CharField()
-    last_name = serializers.CharField(required=False)
-    gender = serializers.ChoiceField(choices=('M', 'F', 'X'))
-    token = serializers.CharField(required=False)
-    level = serializers.ChoiceField(choices=(200, 300, 400, 500, 600))
-    is_assistant = serializers.BooleanField(required=False)
-    is_superuser = serializers.BooleanField(required=False)
-    is_staff = serializers.BooleanField(required=False)
-    is_active = serializers.BooleanField(required=False)
-    department = serializers.PrimaryKeyRelatedField(queryset=Department.objects.all())
+
+    class Meta:
+        model = Users
+        fields = '__all__'
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        # Remove the 'password' field from the output
         data.pop('password', None)
         return data
 

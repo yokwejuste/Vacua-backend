@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime
 
 
 def create_primary_key():
@@ -12,3 +13,7 @@ def get_first_related_model(model):
 def get_current_user(request):
     return request.user
 
+
+def convert_timestamp(timestamp):
+    dt = datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S.%f %z')
+    return dt.strftime('%d/%m/%Y - %H:%M')

@@ -9,6 +9,7 @@ class ReservationsSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def create(self, validated_data):
+        validated_data['reserved_by'] = self.context['request'].user
         return Reservations.objects.create(**validated_data)
 
     def update(self, instance, validated_data):

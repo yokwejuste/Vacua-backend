@@ -60,7 +60,6 @@ class Users(AbstractBaseUser, VacuaBaseModel):
     is_superuser = models.BooleanField(default=False)
     is_assistant = models.BooleanField(default=False)
     password = models.CharField(max_length=100)
-    token = models.CharField(max_length=100, null=True, blank=True)
 
     objects = UserManager()
 
@@ -86,6 +85,10 @@ class Users(AbstractBaseUser, VacuaBaseModel):
         if not self.id:
             self.id = create_primary_key()
         super().save(*args, **kwargs)
+
+    def set_user_status(self, status):
+        self.is_active = status
+        self.save()
 
     class Meta:
         db_table = 'users'
