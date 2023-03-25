@@ -14,7 +14,6 @@ django-environ==0.10.0
 django-oauth-toolkit==2.2.0
 djangorestframework==3.14.0
 drf-yasg==1.21.5
-googleapis-common-protos==1.58.0
 grpcio==1.51.3
 grpcio-status==1.51.3
 httplib2==0.21.0
