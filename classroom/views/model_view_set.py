@@ -3,13 +3,14 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
 from classroom.models import *
+from classroom.permissions import IsClassCoordinator, IsAdmin
 from classroom.serializers import *
 
 
 class BuildingsModelViewSet(ModelViewSet):
     authentication_classes = [OAuth2Authentication, ]
     serializer_class = BuildingsSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, ]
     queryset = Buildings.objects.all()
 
     def get_queryset(self):
@@ -30,7 +31,7 @@ class ReservationsModelViewSet(ModelViewSet):
     authentication_classes = [OAuth2Authentication, ]
     queryset = Reservations.objects.all()
     serializer_class = ReservationsSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsClassCoordinator, IsAdmin]
 
     def get_queryset(self):
         return Reservations.objects.filter(is_deleted=False)
