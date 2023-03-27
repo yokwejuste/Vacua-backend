@@ -58,7 +58,9 @@ class Users(AbstractBaseUser, VacuaBaseModel):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
-    is_assistant = models.BooleanField(default=False)
+    is_cc = models.BooleanField(default=False)
+    is_hod = models.BooleanField(default=False)
+    is_director = models.BooleanField(default=False)
     password = models.CharField(max_length=100)
 
     objects = UserManager()

@@ -1,7 +1,10 @@
+from datetime import datetime
+
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
+from django_q.tasks import async_task
 from twilio.rest import Client
 
 from classroom.models import VacuaBaseModel
@@ -50,13 +53,16 @@ class Reservations(VacuaBaseModel):
         else:
             self.status = False
 
+        scheduled_time = datetime.combine(self.date, self.start_time)
+        async_task('classroom.tasks.send_notification', reservation_id=self.id, schedule=scheduled_time)
+
     def __str__(self):
         return f'Reservation for {self.hall.name} by \
         {self.reserved_by.first_name} {self.reserved_by.last_name}'
 
 
 @receiver(post_save, sender=Reservations)
-def update_hall_status(sender, instance, **kwargs):
+async def update_hall_status(sender, instance, **kwargs):
     if instance.start_time <= timezone.now() <= instance.end_time:
         client.messages.create(
             to=instance.reserved_by.phone_number if instance.reserved_by.phone_number != '' else env(

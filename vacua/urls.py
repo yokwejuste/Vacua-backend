@@ -6,6 +6,8 @@ from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 
+from classroom.views import TestView
+
 schema_view = get_schema_view(
     openapi.Info(
         title="Vacua API",
@@ -26,6 +28,7 @@ urlpatterns = [
     re_path(r'^v1/api/console/', include(('classroom.urls.extra_routes', 'classroom'),
                                          namespace=f'extra_routers')),
     re_path(r'^v1/api/console/', include(('classroom.urls', 'classroom'), namespace=f'auth')),
+    re_path(r'^v1/api/console/', TestView.as_view(), name="test"),
     path('oauth2/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     path('admin/', admin.site.urls),
 ]
