@@ -1,0 +1,40 @@
+services:
+  db:
+    image: postgres
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=vacua
+      - POSTGRES_USER=vacua
+      - POSTGRES_PASSWORD=vacuadb
+  web:
+    build: .
+    command: >
+      sh -c "python manage.py migrate &&
+      python manage.py collectstatic --noinput &&
+      gunicorn --bind 0.0.0.0:8000 vacua.wsgi"
+    volumes:
+      - .:/code
+      - static_volume:/code/static
+    ports:
+      - "8000:8000"
+    environment:
+      - DB_NAME=vacua
+      - DB_USER=vacua
+      - DB_PASSWORD=vacuadb
+      - DB_HOST=db
+      - DB_PORT=5432
+    depends_on:
+      - db
+  nginx:
+    image: nginx
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - static_volume:/code/static
+    ports:
+      - "80:80"
+    depends_on:
+      - web
+
+volumes:
+  static_volume:
