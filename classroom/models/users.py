@@ -92,6 +92,18 @@ class Users(AbstractBaseUser, VacuaBaseModel):
         self.is_active = status
         self.save()
 
+    def get_user_role(self):
+        if self.is_cc:
+            return "Ths is a Class Coordinator"
+        elif self.is_staff:
+            return "This is a Member of Staff"
+        elif self.is_hod:
+            return "This is a head of department"
+        elif self.is_superuser:
+            return "This is a system administrator"
+        elif self.is_director:
+            return "This is a School Director/Dean"
+
     class Meta:
         db_table = 'users'
         verbose_name = 'Users'
