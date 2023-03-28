@@ -10,7 +10,8 @@ services:
   web:
     build: .
     command: >
-      sh -c "python manage.py migrate &&
+      sh -c "python manage.py migrate && 
+      python manage.py post_data --mode clear &&
       python manage.py collectstatic --noinput &&
       gunicorn --bind 0.0.0.0:8000 vacua.wsgi"
     volumes:
