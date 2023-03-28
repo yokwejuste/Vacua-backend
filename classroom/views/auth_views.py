@@ -64,25 +64,29 @@ class LoginView(APIView, TokenView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
-
+        expiration_time = now() + timedelta(hours=6)
         user = authenticate(
             email=data.get('email'),
             password=data.get('password')
         )
 
-        application = Application.objects.get(name='Default')
-        expiration_time = now() + timedelta(hours=6)
-        access_token = AccessToken.objects.create(
-            user=user, application=application,
-            expires=expiration_time, token=secrets.token_hex(16)
-        )
-        access_token.user = user
-        access_token.save()
-
-        print(user)
+        if not user:
+            return Response(
+                {"error": "Invalid credentials"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        else:
+            application = Application.objects.get(name='Default')
+            access_token = AccessToken.objects.create(
+                user=user,
+                application=application,
+                expires=expiration_time,
+                token=secrets.token_hex(16)
+            )
+            success_message = "User logged in successfully"
 
         response_data = {
-            'success_message': "User logged in successfully",
+            'success_message': success_message,
             'access_token': access_token.token,
             'token_type': 'Bearer',
             "expires_in": f'{(expiration_time - now()).seconds // 3600} hours',
@@ -90,7 +94,6 @@ class LoginView(APIView, TokenView):
                 "id": user.id,
                 "email": user.email,
                 "full_name": f"{user.first_name} {user.last_name}",
-                "is_assistant": user.is_assistant,
             }
         }
         return Response(response_data, status=status.HTTP_200_OK)

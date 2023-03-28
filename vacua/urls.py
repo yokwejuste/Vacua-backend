@@ -28,8 +28,8 @@ urlpatterns = [
     re_path(r'^v1/api/console/', include(('classroom.urls.extra_routes', 'classroom'),
                                          namespace=f'extra_routers')),
     re_path(r'^v1/api/console/', include(('classroom.urls', 'classroom'), namespace=f'auth')),
-    re_path(r'^v1/api/console/', TestView.as_view(), name="test"),
-    path('oauth2/', include('oauth2_provider.urls', namespace='oauth2_provider')),
+    re_path(r'^v1/api/console/test', TestView.as_view(), name="test"),
+    path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     path('admin/', admin.site.urls),
 ]
 

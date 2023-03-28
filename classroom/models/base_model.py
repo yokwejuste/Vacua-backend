@@ -14,7 +14,7 @@ class VacuaBaseModelDeleteManager(models.Manager):
 
 
 class VacuaBaseModel(models.Model):
-    id = models.CharField(primary_key=True, max_length=50, default=create_primary_key(), editable=False)
+    id = models.CharField(primary_key=True, max_length=50, default=create_primary_key, editable=False)
     is_deleted = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
