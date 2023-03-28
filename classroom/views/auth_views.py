@@ -94,6 +94,7 @@ class LoginView(APIView, TokenView):
                 "id": user.id,
                 "email": user.email,
                 "full_name": f"{user.first_name} {user.last_name}",
+                "user_type": str(user.get_user_role())
             }
         }
         return Response(response_data, status=status.HTTP_200_OK)
