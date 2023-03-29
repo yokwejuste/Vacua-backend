@@ -8,7 +8,7 @@ class Halls(VacuaBaseModel):
     school = models.ForeignKey('Schools', on_delete=models.CASCADE)
     name = models.CharField(max_length=35)
     capacity = models.PositiveIntegerField()
-    status = models.BooleanField(default=False)
+    status = models.BooleanField(default=False)  # True if the hall is busy, False if the hall is free
 
     class Meta:
         verbose_name = "Hall"

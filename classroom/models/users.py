@@ -18,6 +18,14 @@ LEVEL_CHOICES = (
     (600, 'level 5')
 )
 
+USER_TYPE_CHOICES = (
+    ('HOD', 'Head Of Department'),
+    ('CC', 'Class Coordinator'),
+    ('DEAN', 'School Director'),
+    ('STAFF', 'System Administrator'),
+    ('SUPERUSER', 'Global Administrator')
+)
+
 
 class UserManager(BaseUserManager):
 
@@ -51,14 +59,16 @@ class Users(AbstractBaseUser, VacuaBaseModel):
     date_of_birth = models.DateField(null=True, blank=True)
     gender = models.CharField(max_length=20, null=True, blank=True, choices=GENDER_CHOICES, default='X')
     department = models.ForeignKey('Department', on_delete=models.CASCADE, null=True, blank=True)
-    level = models.CharField(max_length=20, null=True, blank=True, choices=LEVEL_CHOICES, default='O')
+    school = models.ForeignKey('Schools', on_delete=models.CASCADE, null=True, blank=True)
+    level = models.CharField(max_length=20, null=True, blank=True, choices=LEVEL_CHOICES)
     phone_number = models.CharField(max_length=100, null=True, blank=True)
     number_of_students = models.PositiveIntegerField(null=True, blank=True, default=0)
+    user_type = models.CharField(choices=USER_TYPE_CHOICES, max_length=50, default='CC')
     last_name = models.CharField(max_length=100)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
-    is_cc = models.BooleanField(default=False)
+    is_cc = models.BooleanField(default=True)
     is_hod = models.BooleanField(default=False)
     is_director = models.BooleanField(default=False)
     password = models.CharField(max_length=100)
@@ -86,6 +96,18 @@ class Users(AbstractBaseUser, VacuaBaseModel):
     def save(self, *args, **kwargs):
         if not self.id:
             self.id = create_primary_key()
+        if self.is_hod:
+            self.school = self.department.school
+            self.user_type = USER_TYPE_CHOICES[0]
+        elif self.is_cc:
+            self.school = self.department.school
+            self.user_type = USER_TYPE_CHOICES[1]
+        elif self.is_director:
+            self.user_type = USER_TYPE_CHOICES[2]
+        elif self.is_staff:
+            self.user_type = USER_TYPE_CHOICES[3]
+        elif self.is_superuser:
+            self.user_type = USER_TYPE_CHOICES[4]
         super().save(*args, **kwargs)
 
     def set_user_status(self, status):

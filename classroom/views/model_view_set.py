@@ -25,7 +25,7 @@ class BuildingsModelViewSet(ModelViewSet):
     def perform_destroy(self, instance):
         instance.is_deleted = True
         instance.save()
-
+ 
 
 class ReservationsModelViewSet(ModelViewSet):
     authentication_classes = [OAuth2Authentication, ]

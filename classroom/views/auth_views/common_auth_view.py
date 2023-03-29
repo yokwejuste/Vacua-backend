@@ -8,38 +8,11 @@ from oauth2_provider.contrib.rest_framework import OAuth2Authentication
 from oauth2_provider.models import Application, AccessToken
 from oauth2_provider.views import TokenView
 from rest_framework import generics, status
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from classroom.serializers.auth_serilizers import *
-
-
-class RegistrationView(generics.GenericAPIView):
-    serializer_class = RegistrationSerializer
-    permission_classes = [AllowAny, ]
-
-    @swagger_auto_schema(
-        operation_description="Register a new user",
-        request_body=RegistrationSerializer,
-        responses={
-            200: RegistrationResponseSerializer(),
-            300: "Multiple choices",
-            400: "Bad request",
-            500: "Internal server error",
-        }
-    )
-    def post(self, request):
-        serializer = self.get_serializer(data=request.data)
-
-        serializer.is_valid(raise_exception=True)
-
-        serializer.save()
-
-        response_data = {
-            "user": serializer.data,
-        }
-        return Response(response_data, status=status.HTTP_201_CREATED)
+from classroom.serializers.auth_serializers import *
 
 
 class LoginView(APIView, TokenView):
@@ -51,6 +24,8 @@ class LoginView(APIView, TokenView):
         return self.serializer_class(*args, **kwargs)
 
     @swagger_auto_schema(
+        operation_id="Login",
+        operation_summary="Login a user",
         operation_description="Login a user",
         request_body=LoginSerializer,
         responses={
@@ -100,15 +75,44 @@ class LoginView(APIView, TokenView):
         return Response(response_data, status=status.HTTP_200_OK)
 
 
+class ChangePasswordView(generics.GenericAPIView):
+    authentication_classes = [OAuth2Authentication, ]
+    serializer_class = ChangePasswordSerializer
+    permission_classes = [IsAuthenticated, ]
+
+    @swagger_auto_schema(
+        operation_id="Change Password",
+        operation_summary="Change a user's password",
+        operation_description="Change a user password",
+        request_body=ChangePasswordSerializer,
+        responses={
+            200: "Password changed successfully",
+            300: "Multiple choices",
+            400: "Bad request",
+            500: "Internal server error",
+        }
+    )
+    def patch(self, request):
+        user = request.user
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+        user.set_password(data.get('new_password'))
+        user.save()
+        return Response({"message": "Password changed successfully"}, status=status.HTTP_200_OK)
+
+
 class LogoutView(generics.GenericAPIView):
     authentication_classes = [OAuth2Authentication, ]
     serializer_class = LogoutSerializer
-    permission_classes = [AllowAny, ]
+    permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
+        operation_id="Logout Current User",
         operation_description="Logout a user",
         responses={
             200: "User logged out",
+            500: "Server Error",
         }
     )
     def post(self, request):
