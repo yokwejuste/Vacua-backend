@@ -5,10 +5,13 @@
 **Vacua Backend provides all the API calls and queries of this project.**
 
 ## Installation
-1. Fork and clone the repository
+1. Fork, clone the repository and change directory into it.
    ```bash
     # Cloning the repository
     git clone https://github.com/<username>/Vacua-backend
+   
+   # Change directory
+   cd Vacua-backend
     ```
 2. Setup a new postgres database
 Assuming postgresql is install in the computer follow what's next or get to [here for linux](https://www.cherryservers.com/blog/how-to-install-and-setup-postgresql-server-on-ubuntu-20-04) or [here for windows](https://www.microfocus.com/documentation/idol/IDOL_12_0/MediaServer/Guides/html/English/Content/Getting_Started/Configure/_TRN_Set_up_PostgreSQL.htm).
