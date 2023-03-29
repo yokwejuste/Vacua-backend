@@ -26,6 +26,7 @@ class Command(BaseCommand):
             client_type=Application.CLIENT_PUBLIC,
             authorization_grant_type=Application.GRANT_PASSWORD,
         )
+        self.stdout.write(self.style.SUCCESS('Running Application Seeder...'))
 
     def add_arguments(self, parser):
         parser.add_argument('-o', '--only', type=str, help="Only")
