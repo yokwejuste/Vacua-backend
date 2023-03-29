@@ -117,7 +117,7 @@ class LogoutView(generics.GenericAPIView):
     )
     def post(self, request):
         user = request.user
-        app = Application.objects.get(user=user)
+        app = Application.objects.get(name='Default')
         token = AccessToken.objects.get(user=user, application=app)
         token.delete()
         return Response({"message": "User logged out"})

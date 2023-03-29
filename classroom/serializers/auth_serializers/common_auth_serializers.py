@@ -52,4 +52,4 @@ class LogoutSerializer(serializers.Serializer):
         pass
 
     token = serializers.CharField()
-    message = serializers.CharField()
+    message = serializers.CharField(required=False)
