@@ -20,14 +20,11 @@ while True:
     # Detect humans using the Haar Cascade classifier
     humans = haar_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5)
 
-    # Draw a rectangle around the detected humans and count them
-    for (x, y, w, h) in humans:
-        cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-        count += 1
+    # Count the number of people
+    count = len(humans)
 
-    # Display the frame with the number of people counted
-    cv2.putText(frame, 'People Count: ' + str(count), (10, 30), font, 1, (0, 0, 255), 2, cv2.LINE_AA)
-    cv2.imshow('frame', frame)
+    # Print the number of people counted
+    print('People Count:', count)
 
     # Exit the loop if the 'q' key is pressed
     if cv2.waitKey(1) & 0xFF == ord('q'):
