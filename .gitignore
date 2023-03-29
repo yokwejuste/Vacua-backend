@@ -132,6 +132,5 @@ dmypy.json
 .idea/
 .vscode/
 *,json
-static/
 staticfiles/
 .history/
