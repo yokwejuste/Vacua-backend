@@ -66,6 +66,46 @@ class RegistrationResponseSerializer(serializers.Serializer):
     full_name = serializers.CharField()
 
 
+class UpdateUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Users
+        fields = '__all__'
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        return data
+
+    def update(self, instance, validated_data):
+        instance.save()
+        return instance
+
+
+class UpdateUserSerializerResponse(serializers.Serializer):
+    def create(self, validated_data):
+        pass
+
+    def update(self, instance, validated_data):
+        pass
+
+    id = serializers.CharField()
+    email = serializers.EmailField()
+    username = serializers.CharField()
+    full_name = serializers.CharField()
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    def create(self, validated_data):
+        pass
+
+    def update(self, instance, validated_data):
+        if validated_data['new_password'] != validated_data['repeat_new_password']:
+            raise serializers.ValidationError('New password and repeat new password must be same')
+
+    old_password = serializers.CharField()
+    new_password = serializers.CharField()
+    repeat_new_password = serializers.CharField()
+
+
 class LogoutSerializer(serializers.Serializer):
     def create(self, validated_data):
         pass
