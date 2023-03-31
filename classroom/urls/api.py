@@ -1,6 +1,7 @@
 from django.urls import re_path
 
 from classroom.views import LastHallReservationView, GetOccupiedHallsView
+
 from classroom.views.auth_views import *
 
 urlpatterns = [

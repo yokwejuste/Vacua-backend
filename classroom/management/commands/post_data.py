@@ -189,6 +189,7 @@ class Command(BaseCommand):
             email='etiane@vc.com',
             first_name='Etiane',
             last_name='Lenyuiy',
+
             is_staff=True,
             is_superuser=True,
             is_active=True,
