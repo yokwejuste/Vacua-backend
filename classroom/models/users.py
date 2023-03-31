@@ -100,7 +100,12 @@ class Users(AbstractBaseUser, VacuaBaseModel):
             self.school = self.department.school
             self.user_type = USER_TYPE_CHOICES[0]
         elif self.is_cc:
-            self.school = self.department.school
+            if self.department is not None:
+                self.school = self.department.school
+            self.user_type = USER_TYPE_CHOICES[1]
+        elif self.is_cc and self.is_superuser:
+            self.is_cc = False
+            self.school = "No Schools"
             self.user_type = USER_TYPE_CHOICES[1]
         elif self.is_director:
             self.user_type = USER_TYPE_CHOICES[2]
