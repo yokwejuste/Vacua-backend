@@ -52,5 +52,5 @@ class GetOccupiedHallsView(generics.ListAPIView):
         operation_id="Get occupied halls",
     )
     def get(self, request, *args, **kwargs):
-        queryset = self.get_queryset().filter(is_occupied=True)
+        queryset = self.get_queryset().filter(status=True)
         return Response(self.serializer_class(queryset, many=True).data, status=status.HTTP_200_OK)

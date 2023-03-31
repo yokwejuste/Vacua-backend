@@ -136,6 +136,7 @@ class Command(BaseCommand):
             building=Buildings.objects.get(name='Engineering Building'),
             capacity=200,
             school=Schools.objects.get(name='School of Engineering'),
+            status=True
         )
         hall_4.save()
         hall_5 = Halls.objects.create(
@@ -143,6 +144,7 @@ class Command(BaseCommand):
             building=Buildings.objects.get(name='Engineering Building'),
             capacity=200,
             school=Schools.objects.get(name='School of Engineering'),
+            status=True
         )
         hall_5.save()
         hall_6 = Halls.objects.create(
