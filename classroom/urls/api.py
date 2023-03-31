@@ -1,5 +1,6 @@
 from django.urls import re_path
 
+from classroom.views import LastHallReservationView
 from classroom.views.auth_views import *
 
 urlpatterns = [
@@ -19,4 +20,7 @@ urlpatterns = [
     # Director of school authentication urls
     re_path(r'auth/dean/register', DeanRegistrationView.as_view(), name='dean_register'),
     re_path(r'auth/dean/update', DeanUpdateUserView.as_view(), name='dean_update'),
+
+    # Query for last hall reservation
+    re_path(r'reservations/last_reservation', LastHallReservationView.as_view(), name='hall_reservation'),
 ]
