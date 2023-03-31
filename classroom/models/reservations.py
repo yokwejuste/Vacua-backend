@@ -1,10 +1,7 @@
-from datetime import datetime
-
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
-from django_q.tasks import async_task
 from twilio.rest import Client
 
 from classroom.models import VacuaBaseModel
@@ -37,8 +34,8 @@ class Reservations(VacuaBaseModel):
                 from_=env('TWILIO_FROM_NUMBER'),
                 body=f"""
                 Hello {self.reserved_by.first_name} {self.reserved_by.last_name},
-                Your reservation for the hall {self.hall.name} has been confirmed for {convert_timestamp(self.date)} \
-                from {convert_timestamp(self.start_time)} to {convert_timestamp(self.end_time)}.
+                Your reservation for the hall {self.hall.name} has been confirmed for {convert_timestamp(str(self.date))} \
+                from {convert_timestamp(str(self.start_time))} to {convert_timestamp(str(self.end_time))}.
                 
                 
                 Details:
@@ -56,8 +53,8 @@ class Reservations(VacuaBaseModel):
         else:
             self.status = False
 
-        scheduled_time = datetime.combine(self.date, self.start_time)
-        async_task('classroom.tasks.send_notification', reservation_id=self.id, schedule=scheduled_time)
+        # scheduled_time = datetime.combine(self.date, self.start_time)
+        # async_task('classroom.tasks.send_notification', reservation_id=self.id, schedule=scheduled_time)
 
     def __str__(self):
         return f'Reservation for {self.hall.name} by \
@@ -72,19 +69,19 @@ async def update_hall_status(sender, instance, **kwargs):
                 'TWILIO_TO_NUMBER'),
             from_=env('TWILIO_FROM_NUMBER'),
             body=f"""
-            Hey {instance.reserved_by.first_name} {instance.reserved_by.last_name},
+Hey {instance.reserved_by.first_name} {instance.reserved_by.last_name},
             
-            You reserved the hall {instance.hall.name} for {instance.date} from {instance.start_time} to {instance.end_time}.
+You reserved the hall {instance.hall.name} for {instance.date} from {instance.start_time} to {instance.end_time}.
             
-            Your reservation is confirmed and starts now.
+Your reservation is confirmed and starts now.
             
-            Time left: {instance.end_time - timezone.now()}
+Time left: {instance.end_time - timezone.now()}
             
-            Details:
-                Hall: {instance.hall.name}
-                Capacity: {instance.hall.capacity}
-                School: {instance.hall.school.name}
-                Building: {instance.hall.building.name}
+Details:
+Hall: {instance.hall.name}
+Capacity: {instance.hall.capacity}
+School: {instance.hall.school.name}
+Building: {instance.hall.building.name}
             """
         )
         instance.status = True  # hall is occupied

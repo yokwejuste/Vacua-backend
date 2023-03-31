@@ -39,3 +39,18 @@ class LastHallReservationView(generics.RetrieveAPIView):
             return Response(self.serializer_class(queryset.last()).data, status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+class GetOccupiedHallsView(generics.ListAPIView):
+    serializer_class = HallsSerializer
+
+    def get_queryset(self):
+        queryset = Halls.objects.all().filter(status=True)
+        return queryset
+
+    @swagger_auto_schema(
+        operation_id="Get occupied halls",
+    )
+    def get(self, request, *args, **kwargs):
+        queryset = self.get_queryset().filter(is_occupied=True)
+        return Response(self.serializer_class(queryset, many=True).data, status=status.HTTP_200_OK)

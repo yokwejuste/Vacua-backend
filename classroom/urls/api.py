@@ -1,6 +1,6 @@
 from django.urls import re_path
 
-from classroom.views import LastHallReservationView
+from classroom.views import LastHallReservationView, GetOccupiedHallsView
 from classroom.views.auth_views import *
 
 urlpatterns = [
@@ -23,4 +23,5 @@ urlpatterns = [
 
     # Query for last hall reservation
     re_path(r'reservations/last_reservation', LastHallReservationView.as_view(), name='hall_reservation'),
+    re_path(r'reservations/occupied_halls', GetOccupiedHallsView.as_view(), name='occupied_halls'),
 ]

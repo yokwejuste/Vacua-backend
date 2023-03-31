@@ -15,5 +15,6 @@ def get_current_user(request):
 
 
 def convert_timestamp(timestamp):
-    dt = datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S.%f %z')
-    return dt.strftime('%d/%m/%Y - %H:%M')
+    dt_obj = datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S.%f%z')
+    formatted_date = dt_obj.strftime('%d/%m/%Y - %H:%M')
+    return formatted_date
