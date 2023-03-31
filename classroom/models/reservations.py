@@ -33,25 +33,28 @@ class Reservations(VacuaBaseModel):
                 to=self.reserved_by.phone_number if self.reserved_by.phone_number != '' else env('TWILIO_TO_NUMBER'),
                 from_=env('TWILIO_FROM_NUMBER'),
                 body=f"""
-                Hello {self.reserved_by.first_name} {self.reserved_by.last_name},
-                Your reservation for the hall {self.hall.name} has been confirmed for {convert_timestamp(str(self.date))} \
-                from {convert_timestamp(str(self.start_time))} to {convert_timestamp(str(self.end_time))}.
-                
-                
-                Details:
-                    Hall: {self.hall.name}
-                    Capacity: {self.hall.capacity}
-                    School: {self.hall.school.name}
-                    Building: {self.hall.building.name}
-                    
-                
-                With Care and Love,
-                Vacua Team
+Hello {self.reserved_by.first_name} {self.reserved_by.last_name},
+Your reservation for the hall {self.hall.name} has been confirmed for {convert_timestamp(str(self.date))} \
+from {convert_timestamp(str(self.start_time))} to {convert_timestamp(str(self.end_time))}.
+
+
+Details:
+    Hall: {self.hall.name}
+    Capacity: {self.hall.capacity}
+    School: {self.hall.school.name}
+    Building: {self.hall.building.name}
+    
+
+With Care and Love,
+Vacua Team
                 """
             )
             self.status = True
+            super(Reservations, self).save(*args, **kwargs)
         else:
-            self.status = False
+            self.status = True
+            super(Reservations, self).save(*args, **kwargs)
+
 
         # scheduled_time = datetime.combine(self.date, self.start_time)
         # async_task('classroom.tasks.send_notification', reservation_id=self.id, schedule=scheduled_time)

@@ -27,18 +27,15 @@ class LastHallReservationView(generics.RetrieveAPIView):
     serializer_class = ReservationsSerializer
 
     def get_queryset(self):
-        queryset = Reservations.objects.all().filter(status=True)
+        queryset = Reservations.objects.all().filter(reserved_by=self.request.user).order_by('-id')
         return queryset
 
     @swagger_auto_schema(
         operation_id="Get last hall reservation",
     )
     def get(self, request, *args, **kwargs):
-        queryset = self.get_queryset().filter(reserved_by=request.user)
-        if queryset.exists():
-            return Response(self.serializer_class(queryset.last()).data, status=status.HTTP_200_OK)
-        else:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+        queryset = self.get_queryset()
+        return Response(self.serializer_class(queryset[0]).data, status=status.HTTP_200_OK)
 
 
 class GetOccupiedHallsView(generics.ListAPIView):

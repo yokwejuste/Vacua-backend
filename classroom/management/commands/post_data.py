@@ -180,6 +180,7 @@ class Command(BaseCommand):
             course_name='Software Engineering',
             course_code='CSC 411',
             course_lecturer='Steve Brotherhood',
+            status=True,
             date=timezone.now() + timedelta(days=3),
         )
         reservation_1.save()
@@ -240,10 +241,9 @@ class Command(BaseCommand):
         self.run_department_seeder()
         self.run_building_seeder()
         self.run_hall_seeder()
-        self.run_reservation_seeder()
         # check if application item with name 'Default' exists, if no create one else skip
         if not Application.objects.filter(name='Default').exists():
             self.run_application_seeder()
         self.stdout.write(self.style.SUCCESS('Application seeded successfully!'))
-
+        self.run_reservation_seeder()
         self.stdout.write(self.style.SUCCESS('Database seeded successfully!'))
