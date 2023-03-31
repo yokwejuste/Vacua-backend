@@ -23,6 +23,6 @@ urlpatterns = [
     re_path(r'auth/dean/update', DeanUpdateUserView.as_view(), name='dean_update'),
 
     # Query for last hall reservation
-    re_path(r'reservations/last_reservation', LastHallReservationView.as_view(), name='hall_reservation'),
-    re_path(r'reservations/occupied_halls', GetOccupiedHallsView.as_view(), name='occupied_halls'),
+    re_path(r'halls/last_reservation', LastHallReservationView.as_view(), name='hall_reservation'),
+    re_path(r'halls/occupied_halls', GetOccupiedHallsView.as_view(), name='occupied_halls'),
 ]
