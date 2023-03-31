@@ -75,6 +75,20 @@ class Command(BaseCommand):
         )
         department_3.save()
 
+    def run_user_seeder(self):
+        self.stdout.write(self.style.SUCCESS('Running User Seeder...'))
+        user_1 = Users.objects.create(
+            username='etiane',
+            email='etiane@vc.com',
+            first_name='Etiane',
+            last_name='Lenyuiy',
+            password='password',
+            is_staff=True,
+            is_superuser=True,
+            is_active=True,
+        )
+        user_1.save()
+
     def handle(self, *args, **options):
         if options['mode'] == MODE_CLEAR:
             truncate_db()
@@ -99,7 +113,7 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS('Buildings seeded successfully!'))
 
         truncate_db()
-
+        self.run_user_seeder()
         self.run_schools_seeder()
         self.department_seeder()
         # check if application item with name 'Default' exists, if no create one else skip
