@@ -27,7 +27,7 @@ class LastHallReservationView(generics.RetrieveAPIView):
     serializer_class = ReservationsSerializer
 
     def get_queryset(self):
-        queryset = Reservations.objects.all().filter(reserved_by=self.request.user).order_by('-id')
+        queryset = Reservations.objects.all().filter(reserved_by=self.request.user).order_by('-created_at')
         return queryset
 
     @swagger_auto_schema(
